@@ -63,12 +63,22 @@
   @media (min-width: 1024px) {
     body {
       background:
-        radial-gradient(1100px circle at 0% 10%, rgba(169,121,30,0.07), transparent 55%),
-        radial-gradient(1100px circle at 100% 25%, rgba(11,29,58,0.05), transparent 55%),
-        radial-gradient(900px circle at 8% 95%, rgba(11,29,58,0.04), transparent 50%),
-        radial-gradient(900px circle at 96% 90%, rgba(169,121,30,0.05), transparent 50%),
+        radial-gradient(1000px circle at -5% 8%, rgba(169,121,30,0.16), transparent 52%),
+        radial-gradient(1000px circle at 105% 20%, rgba(11,29,58,0.13), transparent 52%),
+        radial-gradient(900px circle at -2% 92%, rgba(11,29,58,0.12), transparent 50%),
+        radial-gradient(900px circle at 102% 88%, rgba(169,121,30,0.14), transparent 50%),
         var(--cream);
       background-attachment: fixed;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 22px;
+      pointer-events: none;
+      z-index: 998;
+      border: 1px solid rgba(11,29,58,0.1);
+      border-radius: 28px;
     }
   }
 
@@ -175,7 +185,7 @@
   .hero-inner {
     display: grid;
     gap: 28px;
-    max-width: 760px;
+    max-width: clamp(760px, 62vw, 940px);
   }
 
   .eyebrow {
@@ -250,7 +260,7 @@
   section { padding: clamp(64px, 9vw, 120px) 0; }
 
   .section-head {
-    max-width: 620px;
+    max-width: clamp(620px, 42vw, 760px);
     margin-bottom: clamp(36px, 5vw, 56px);
   }
 
@@ -280,7 +290,7 @@
   .credential-list {
     display: grid;
     gap: 14px;
-    max-width: 720px;
+    max-width: clamp(720px, 55vw, 860px);
   }
 
   .credential-row {
