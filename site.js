@@ -58,6 +58,7 @@
   if (modal) {
     var titleEl = document.getElementById("modal-note-title");
     var closeBtn = document.getElementById("modal-close");
+    var scrollEl = document.querySelector(".modal-scroll");
     var pageImgEls = [1, 2, 3].map(function (n) { return document.getElementById("modal-page-img-" + n); });
     var lastFocused = null;
 
@@ -83,6 +84,7 @@
         }
       });
       modal.hidden = false;
+      if (scrollEl) scrollEl.scrollTop = 0;
       document.body.style.overflow = "hidden";
       lastFocused = document.activeElement;
       if (closeBtn) closeBtn.focus();
