@@ -59,7 +59,7 @@
     var titleEl = document.getElementById("modal-note-title");
     var closeBtn = document.getElementById("modal-close");
     var scrollEl = document.querySelector(".modal-scroll");
-    var pageImgEls = [1, 2, 3].map(function (n) { return document.getElementById("modal-page-img-" + n); });
+    var pageImgEls = [1].map(function (n) { return document.getElementById("modal-page-img-" + n); });
     var lastFocused = null;
 
     function resetPageSlot(el) {
