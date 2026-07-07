@@ -58,10 +58,30 @@
   if (modal) {
     var titleEl = document.getElementById("modal-note-title");
     var closeBtn = document.getElementById("modal-close");
+    var pageImgEls = [1, 2, 3].map(function (n) { return document.getElementById("modal-page-img-" + n); });
     var lastFocused = null;
 
-    function openModal(title) {
+    function resetPageSlot(el) {
+      el.innerHTML = "";
+      el.textContent = "Preview page coming soon";
+    }
+
+    function openModal(title, slug) {
       if (titleEl) titleEl.textContent = title;
+      pageImgEls.forEach(function (el, i) {
+        if (!el) return;
+        if (slug) {
+          var img = document.createElement("img");
+          img.src = "resources/history/previews/" + slug + "/" + (i + 1) + ".jpg";
+          img.alt = title + " — preview page " + (i + 1);
+          img.loading = "lazy";
+          img.onerror = function () { resetPageSlot(el); };
+          el.innerHTML = "";
+          el.appendChild(img);
+        } else {
+          resetPageSlot(el);
+        }
+      });
       modal.hidden = false;
       document.body.style.overflow = "hidden";
       lastFocused = document.activeElement;
@@ -76,7 +96,7 @@
 
     document.querySelectorAll(".note-row").forEach(function (row) {
       row.addEventListener("click", function () {
-        openModal(row.getAttribute("data-title") || "");
+        openModal(row.getAttribute("data-title") || "", row.getAttribute("data-slug") || "");
       });
     });
 
