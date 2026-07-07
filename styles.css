@@ -605,6 +605,50 @@ a { color: inherit; }
 
 .sample-media img { width: 100%; height: 100%; object-fit: cover; }
 
+/* First-page PDF preview: hover reveals a "click to view full PDF" prompt */
+a.sample-media.pdf-thumb {
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pdf-thumb img { object-position: top center; transition: transform 0.3s ease; }
+.pdf-thumb:hover img { transform: scale(1.02); }
+
+.pdf-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(24, 36, 32, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.pdf-thumb:hover .pdf-thumb-overlay,
+.pdf-thumb:focus-visible .pdf-thumb-overlay {
+  background: rgba(24, 36, 32, 0.55);
+}
+
+.pdf-thumb-prompt {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  background: var(--bg);
+  color: var(--green);
+  font: 600 13px var(--sans);
+  padding: 10px 18px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.pdf-thumb:hover .pdf-thumb-prompt,
+.pdf-thumb:focus-visible .pdf-thumb-prompt {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .sample-body {
   padding: 26px 28px 28px;
   display: flex;
