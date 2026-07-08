@@ -9,20 +9,55 @@
   var HEADER_OFFSET = 130;
   var root = document.getElementById("page-fade-root");
 
+  // Capture the initial hash, then strip it from the URL immediately.
+  // Some browsers re-run their own native "scroll to fragment" (using our
+  // scroll-margin-top CSS) whenever a late layout shift happens — e.g. web
+  // fonts finishing load — which silently undoes our custom offset/centred
+  // scroll. Clearing the hash from the address bar removes that fragment
+  // reference so only our own scrollToHash logic below can move the page.
+  var initialHash = window.location.hash;
+  if (window.history && "scrollRestoration" in window.history) {
+    // Prevent the browser from auto-restoring a stored scroll position
+    // (e.g. 0,0 from the moment below) over our own programmatic scroll.
+    window.history.scrollRestoration = "manual";
+  }
+  if (initialHash && window.history && window.history.replaceState) {
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+
   /* ---- Offset anchor scroll on load (for cross-page page.html#section links) ---- */
   function scrollToHash(hash, smooth) {
     if (!hash) return;
-    var el = document.getElementById(hash.replace(/^#/, ""));
+    var id = hash.replace(/^#/, "");
+    var el = document.getElementById(id);
     if (!el) return;
-    var y = el.getBoundingClientRect().top + window.pageYOffset - HEADER_OFFSET;
+    var elTop = el.getBoundingClientRect().top + window.pageYOffset;
+    var y = elTop - HEADER_OFFSET;
+
+    if (id === "rates") {
+      // Centre the rates section within the space below the sticky header,
+      // rather than just clearing the header.
+      var available = window.innerHeight - HEADER_OFFSET;
+      var sectionHeight = el.getBoundingClientRect().height;
+      if (sectionHeight < available) {
+        y = elTop - HEADER_OFFSET - (available - sectionHeight) / 2;
+      }
+    }
+
     window.scrollTo({ top: y, behavior: smooth ? "smooth" : "auto" });
   }
 
-  if (window.location.hash) {
-    // Wait for layout/fonts, then land precisely below the sticky header.
+  if (initialHash) {
+    // Wait for layout/fonts, then land precisely on target.
     window.addEventListener("load", function () {
       requestAnimationFrame(function () {
-        requestAnimationFrame(function () { scrollToHash(window.location.hash, true); });
+        requestAnimationFrame(function () {
+          scrollToHash(initialHash, true);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function () { scrollToHash(initialHash, false); });
+          }
+          setTimeout(function () { scrollToHash(initialHash, false); }, 400);
+        });
       });
     });
   }
@@ -36,6 +71,17 @@
 
     var href = a.getAttribute("href");
     if (!href) return;
+
+    // Pure same-page anchor (e.g. "#rates") — use our offset/centring scroll instead of the browser default.
+    if (href.charAt(0) === "#" && href.length > 1) {
+      var target = document.getElementById(href.slice(1));
+      if (target) {
+        e.preventDefault();
+        scrollToHash(href, true);
+        setTimeout(function () { scrollToHash(href, false); }, 400);
+      }
+      return;
+    }
 
     // Only intercept links to another internal .html page (not pure #anchors, not external).
     var isInternalPage = /\.html(?:#|$)/.test(href) && !/^https?:\/\//.test(href);
