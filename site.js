@@ -62,6 +62,18 @@
     });
   }
 
+  /* ---- WhatsApp click conversion tracking (Google Ads) ---- */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="https://wa.me/"]');
+    if (!a) return;
+    if (window.gtag) {
+      window.gtag("event", "whatsapp_click", {
+        event_category: "engagement",
+        event_label: window.location.pathname
+      });
+    }
+  }, true);
+
   /* ---- Fade-out on internal navigation ---- */
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest("a[href]");
